@@ -383,7 +383,7 @@ def analyze_video(path: Path, thumbnail: Path = None) -> tuple:
     Returns
     -------
     Tuple
-        A tuple with (thumbail path, width, height, duration)
+        A tuple with (thumbnail path, width, height, duration)
     """
     try:
         import moviepy.editor as mp
@@ -391,14 +391,18 @@ def analyze_video(path: Path, thumbnail: Path = None) -> tuple:
         raise Exception("Please install moviepy>=1.0.3 and retry")
 
     print(f'Analyzing CLIP file "{path}"')
-    video = mp.VideoFileClip(str(path))
-    width, height = video.size
-    if not thumbnail:
-        thumbnail = f"{path}.jpg"
-        print(f'Generating thumbnail "{thumbnail}"...')
-        video.save_frame(thumbnail, t=(video.duration / 2))
-        crop_thumbnail(thumbnail)
-    return thumbnail, width, height, video.duration
+
+    with mp.VideoFileClip(str(path)) as video:
+        width, height = video.size
+        duration = video.duration
+        if not thumbnail:
+            thumbnail = f"{path}.jpg"
+            print(f'Generating thumbnail "{thumbnail}"...')
+            video.save_frame(thumbnail, t=(duration / 2))
+            # Assume crop_thumbnail is another function defined elsewhere
+            crop_thumbnail(thumbnail)
+
+    return thumbnail, width, height, duration
 
 
 def crop_thumbnail(path: Path) -> bool:
