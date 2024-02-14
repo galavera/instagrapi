@@ -2,6 +2,7 @@ import json
 import random
 import tempfile
 import time
+import os
 from pathlib import Path
 from typing import Dict, List
 from uuid import uuid4
@@ -390,14 +391,14 @@ def analyze_video(path: Path, thumbnail: Path = None) -> tuple:
     except ImportError:
         raise Exception("Please install moviepy>=1.0.3 and retry")
 
-    print(f'Analyzing CLIP file "{path}"')
+    print(f'Analyzing CLIP file "{os.path.basename(path)}"')
 
     with mp.VideoFileClip(str(path)) as video:
         width, height = video.size
         duration = video.duration
         if not thumbnail:
             thumbnail = f"{path}.jpg"
-            print(f'Generating thumbnail "{thumbnail}"...')
+            print(f'Generating thumbnail "{os.path.basename(thumbnail)}"...')
             video.save_frame(thumbnail, t=(duration / 2))
             # Assume crop_thumbnail is another function defined elsewhere
             crop_thumbnail(thumbnail)
